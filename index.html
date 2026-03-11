@@ -109,15 +109,19 @@
     .boy .hair {
       position: absolute;
       top: -6px; left: -4px;
-      width: 88px; height: 46px;
-      background: #3d2b1f;
+      width: 88px; height: 32px;
+      background: repeating-linear-gradient(
+        90deg,
+        #3d2b1f 0px, #3d2b1f 6px,
+        #4e3828 6px, #4e3828 12px
+      );
       border-radius: 50% 50% 0 0;
       z-index: 1;
     }
     .boy .hair::after {
       content: '';
       position: absolute;
-      top: 34px; left: 4px;
+      top: 20px; left: 4px;
       width: 14px; height: 14px;
       background: #3d2b1f;
       border-radius: 0 0 0 50%;
@@ -172,8 +176,12 @@
     .girl .hair {
       position: absolute;
       top: -10px; left: -8px;
-      width: 88px; height: 52px;
-      background: #8b4513;
+      width: 88px; height: 38px;
+      background: repeating-linear-gradient(
+        90deg,
+        #8b4513 0px, #8b4513 7px,
+        #a0521a 7px, #a0521a 14px
+      );
       border-radius: 50% 50% 20% 20%;
       z-index: 1;
     }
@@ -181,7 +189,7 @@
     .girl .hair::before {
       content: '';
       position: absolute;
-      top: 24px; left: -10px;
+      top: 20px; left: -10px;
       width: 18px; height: 36px;
       background: #8b4513;
       border-radius: 50%;
@@ -190,7 +198,7 @@
     .girl .hair::after {
       content: '';
       position: absolute;
-      top: 24px; right: -10px;
+      top: 20px; right: -10px;
       width: 18px; height: 36px;
       background: #8b4513;
       border-radius: 50%;
@@ -199,9 +207,10 @@
     /* 发饰 */
     .girl .ribbon {
       position: absolute;
-      top: -14px; right: 6px;
-      z-index: 2;
-      font-size: 1.1rem;
+      top: -22px; left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      font-size: 2rem;
     }
     .girl .body {
       width: 64px; height: 72px;
