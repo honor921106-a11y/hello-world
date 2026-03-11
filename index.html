@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>你好，我的男孩</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(160deg, #ffecd2 0%, #fcb69f 40%, #ff9a9e 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      overflow: hidden;
+    }
+
+    /* 漂浮爱心背景 */
+    .hearts-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    .heart-float {
+      position: absolute;
+      font-size: 1.4rem;
+      animation: floatUp linear infinite;
+      opacity: 0.55;
+    }
+    @keyframes floatUp {
+      0%   { transform: translateY(110vh) rotate(-10deg); opacity: 0.5; }
+      100% { transform: translateY(-10vh) rotate(10deg);  opacity: 0; }
+    }
+
+    .scene {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    /* ===== 小人区域 ===== */
+    .characters {
+      display: flex;
+      align-items: flex-end;
+      gap: 32px;
+      margin-bottom: 36px;
+    }
+
+    .char { display: flex; flex-direction: column; align-items: center; }
+
+    /* 通用头部 */
+    .head {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      position: relative;
+      margin-bottom: -4px;
+    }
+    /* 眼睛 */
+    .eyes {
+      position: absolute;
+      top: 34px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; gap: 14px;
+    }
+    .eye {
+      width: 9px; height: 10px;
+      background: #3d2b1f;
+      border-radius: 50%;
+      position: relative;
+    }
+    .eye::after { /* 眼睛高光 */
+      content: '';
+      position: absolute;
+      top: 1px; right: 1px;
+      width: 3px; height: 3px;
+      background: #fff;
+      border-radius: 50%;
+    }
+    /* 腮红 */
+    .blush {
+      position: absolute;
+      top: 46px;
+      width: 14px; height: 8px;
+      background: rgba(255, 120, 120, 0.45);
+      border-radius: 50%;
+    }
+    .blush.left  { left: 8px; }
+    .blush.right { right: 8px; }
+    /* 嘴巴 */
+    .mouth {
+      position: absolute;
+      bottom: 14px; left: 50%;
+      transform: translateX(-50%);
+      width: 18px; height: 9px;
+      border: 2.5px solid #3d2b1f;
+      border-top: none;
+      border-radius: 0 0 18px 18px;
+    }
+
+    /* ===== 男孩 ===== */
+    .boy .head {
+      background: radial-gradient(circle at 40% 35%, #fde8c8, #f5c18a);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    }
+    /* 男孩头发 */
+    .boy .hair {
+      position: absolute;
+      top: -6px; left: -4px;
+      width: 80px; height: 42px;
+      background: #3d2b1f;
+      border-radius: 50% 50% 0 0;
+      z-index: 1;
+    }
+    .boy .hair::after {
+      content: '';
+      position: absolute;
+      top: 30px; left: 4px;
+      width: 14px; height: 14px;
+      background: #3d2b1f;
+      border-radius: 0 0 0 50%;
+    }
+    .boy .body {
+      width: 64px; height: 72px;
+      background: linear-gradient(180deg, #5b8dee 0%, #3a6fd8 100%);
+      border-radius: 20px 20px 14px 14px;
+      position: relative;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    /* 衬衫领子 */
+    .boy .body::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%; transform: translateX(-50%);
+      width: 20px; height: 20px;
+      background: #fff;
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    }
+    .boy .arm-l, .boy .arm-r {
+      position: absolute;
+      width: 16px; height: 44px;
+      background: linear-gradient(180deg, #5b8dee, #3a6fd8);
+      border-radius: 8px;
+      top: 6px;
+    }
+    .boy .arm-l { left: -14px; transform: rotate(10deg); }
+    .boy .arm-r { right: -14px; transform: rotate(-10deg); }
+    .boy .legs {
+      display: flex; gap: 8px;
+      margin-top: 2px;
+    }
+    .boy .leg {
+      width: 22px; height: 40px;
+      background: linear-gradient(180deg, #3a4a6b, #283450);
+      border-radius: 0 0 10px 10px;
+    }
+    .boy .shoe {
+      width: 26px; height: 12px;
+      background: #3d2b1f;
+      border-radius: 50% 50% 10px 10px;
+      margin-top: -2px;
+    }
+    .boy .foot { display: flex; flex-direction: column; align-items: center; }
+
+    /* ===== 女孩 ===== */
+    .girl .head {
+      background: radial-gradient(circle at 40% 35%, #ffe8e8, #f5b8b8);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    }
+    .girl .hair {
+      position: absolute;
+      top: -10px; left: -8px;
+      width: 88px; height: 52px;
+      background: #8b4513;
+      border-radius: 50% 50% 20% 20%;
+      z-index: 1;
+    }
+    /* 双马尾 */
+    .girl .hair::before {
+      content: '';
+      position: absolute;
+      top: 24px; left: -10px;
+      width: 18px; height: 36px;
+      background: #8b4513;
+      border-radius: 50%;
+      transform: rotate(-15deg);
+    }
+    .girl .hair::after {
+      content: '';
+      position: absolute;
+      top: 24px; right: -10px;
+      width: 18px; height: 36px;
+      background: #8b4513;
+      border-radius: 50%;
+      transform: rotate(15deg);
+    }
+    /* 发饰 */
+    .girl .ribbon {
+      position: absolute;
+      top: -14px; right: 6px;
+      z-index: 2;
+      font-size: 1.1rem;
+    }
+    .girl .body {
+      width: 64px; height: 72px;
+      background: linear-gradient(180deg, #ff8fab 0%, #e05080 100%);
+      border-radius: 20px 20px 30px 30px;
+      position: relative;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    /* 裙子蕾丝 */
+    .girl .body::after {
+      content: '';
+      position: absolute;
+      bottom: -10px; left: -6px;
+      width: 76px; height: 22px;
+      background: linear-gradient(180deg, #ffb6c1, #ff8fab);
+      border-radius: 50% 50% 30% 30%;
+    }
+    .girl .arm-l, .girl .arm-r {
+      position: absolute;
+      width: 14px; height: 38px;
+      background: linear-gradient(180deg, #ff8fab, #e05080);
+      border-radius: 7px;
+      top: 6px;
+    }
+    .girl .arm-l { left: -12px; transform: rotate(12deg); }
+    .girl .arm-r { right: -12px; transform: rotate(-12deg); }
+    .girl .legs {
+      display: flex; gap: 6px;
+      margin-top: 14px;
+    }
+    .girl .leg {
+      width: 20px; height: 34px;
+      background: #fde8c8;
+      border-radius: 0 0 8px 8px;
+    }
+    .girl .shoe {
+      width: 24px; height: 10px;
+      background: #e05080;
+      border-radius: 50% 50% 8px 8px;
+      margin-top: -2px;
+    }
+    .girl .foot { display: flex; flex-direction: column; align-items: center; }
+
+    /* 名字标签 */
+    .char-name {
+      margin-top: 10px;
+      font-size: 0.82rem;
+      color: #fff;
+      background: rgba(255,255,255,0.3);
+      padding: 3px 12px;
+      border-radius: 20px;
+      backdrop-filter: blur(4px);
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    /* 爱心连线 */
+    .heart-between {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      animation: heartbeat 1.2s ease-in-out infinite;
+      filter: drop-shadow(0 2px 6px rgba(255,80,80,0.5));
+    }
+    @keyframes heartbeat {
+      0%,100% { transform: scale(1); }
+      30%      { transform: scale(1.28); }
+      60%      { transform: scale(1.1); }
+    }
+
+    /* 按钮 */
+    .btn {
+      margin-top: 8px;
+      padding: 16px 52px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: #fff;
+      background: linear-gradient(135deg, #ff6b9d 0%, #c9335e 100%);
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 8px 28px rgba(201, 51, 94, 0.45);
+      transition: transform 0.18s, box-shadow 0.18s;
+      outline: none;
+    }
+    .btn:hover { transform: translateY(-3px); box-shadow: 0 14px 36px rgba(201,51,94,0.55); }
+    .btn:active { transform: translateY(0); }
+
+    /* ===== 弹窗 ===== */
+    .overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(6px);
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      animation: fadeIn 0.2s ease;
+    }
+    .overlay.active { display: flex; }
+
+    .modal {
+      background: #fff;
+      border-radius: 28px;
+      padding: 52px 52px 44px;
+      text-align: center;
+      box-shadow: 0 28px 72px rgba(0,0,0,0.22);
+      animation: popIn 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+      max-width: 340px;
+      width: 88%;
+    }
+
+    .modal-heart {
+      font-size: 5.5rem;
+      line-height: 1;
+      animation: heartbeat 1s ease-in-out infinite;
+      filter: drop-shadow(0 4px 16px rgba(255,60,80,0.5));
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .modal-text {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #c9335e;
+      letter-spacing: 0.1em;
+      margin-bottom: 32px;
+      text-shadow: 0 2px 8px rgba(201,51,94,0.2);
+    }
+
+    .modal-close {
+      padding: 12px 40px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(135deg, #ff6b9d 0%, #c9335e 100%);
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(201,51,94,0.35);
+      transition: opacity 0.18s, transform 0.18s;
+      outline: none;
+    }
+    .modal-close:hover { opacity: 0.85; transform: translateY(-2px); }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.7) translateY(30px); }
+      to   { opacity: 1; transform: scale(1)   translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- 漂浮爱心背景 -->
+<div class="hearts-bg" id="heartsBg"></div>
+
+<div class="scene">
+  <!-- 两个Q版小人 -->
+  <div class="characters">
+
+    <!-- 男孩 -->
+    <div class="char boy">
+      <div style="position:relative">
+        <div class="head">
+          <div class="hair"></div>
+          <div class="eyes">
+            <div class="eye"></div>
+            <div class="eye"></div>
+          </div>
+          <div class="blush left"></div>
+          <div class="blush right"></div>
+          <div class="mouth"></div>
+        </div>
+        <div class="body" style="position:relative">
+          <div class="arm-l"></div>
+          <div class="arm-r"></div>
+        </div>
+      </div>
+      <div class="legs">
+        <div class="foot"><div class="leg"></div><div class="shoe"></div></div>
+        <div class="foot"><div class="leg"></div><div class="shoe"></div></div>
+      </div>
+      <div class="char-name">东洋 💙</div>
+    </div>
+
+    <!-- 爱心 -->
+    <div class="heart-between">❤️</div>
+
+    <!-- 女孩 -->
+    <div class="char girl">
+      <div style="position:relative">
+        <div class="head">
+          <div class="hair"><span class="ribbon">🎀</span></div>
+          <div class="eyes">
+            <div class="eye"></div>
+            <div class="eye"></div>
+          </div>
+          <div class="blush left"></div>
+          <div class="blush right"></div>
+          <div class="mouth"></div>
+        </div>
+        <div class="body" style="position:relative">
+          <div class="arm-l"></div>
+          <div class="arm-r"></div>
+        </div>
+      </div>
+      <div class="legs">
+        <div class="foot"><div class="leg"></div><div class="shoe"></div></div>
+        <div class="foot"><div class="leg"></div><div class="shoe"></div></div>
+      </div>
+      <div class="char-name">小可爱 🩷</div>
+    </div>
+
+  </div>
+
+  <button class="btn" onclick="openModal()">你好，我的男孩 💌</button>
+</div>
+
+<!-- 弹窗 -->
+<div class="overlay" id="overlay" onclick="closeModal(event)">
+  <div class="modal">
+    <span class="modal-heart">❤️</span>
+    <p class="modal-text">爱你，东洋！</p>
+    <button class="modal-close" onclick="closeModal()">么么哒 💋</button>
+  </div>
+</div>
+
+<script>
+  // 生成漂浮爱心
+  const bg = document.getElementById('heartsBg');
+  const emojis = ['❤️','🩷','💕','💗','💓','💖','🌸'];
+  for (let i = 0; i < 18; i++) {
+    const s = document.createElement('span');
+    s.className = 'heart-float';
+    s.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    s.style.left = Math.random() * 100 + 'vw';
+    s.style.animationDuration = (6 + Math.random() * 8) + 's';
+    s.style.animationDelay = (Math.random() * 8) + 's';
+    s.style.fontSize = (0.9 + Math.random() * 1.4) + 'rem';
+    bg.appendChild(s);
+  }
+
+  function openModal() {
+    document.getElementById('overlay').classList.add('active');
+  }
+  function closeModal(e) {
+    const o = document.getElementById('overlay');
+    if (!e || e.target === o) o.classList.remove('active');
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>
