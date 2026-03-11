@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OpenClaw Agent Store · 精英智能体市场</title>
+  <title>晓涵的商店 · OpenClaw Agent Store</title>
   <style>
     :root {
       --bg: #0d0f1a;
@@ -24,6 +24,51 @@
       color: var(--text);
       font-family: 'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;
       min-height: 100vh;
+    }
+
+    /* ===== 晓涵商店标题 ===== */
+    .shop-owner-banner {
+      text-align: center;
+      padding: 36px 24px 0;
+      position: relative;
+    }
+    .shop-owner-title {
+      font-size: clamp(2.4rem, 7vw, 4.2rem);
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      line-height: 1.15;
+      background: linear-gradient(100deg, #ff9de2 0%, #c084fc 35%, #818cf8 65%, #67e8f9 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 24px rgba(192,132,252,0.4));
+      animation: titleShine 4s ease-in-out infinite alternate;
+    }
+    @keyframes titleShine {
+      from { filter: drop-shadow(0 0 16px rgba(192,132,252,0.35)); }
+      to   { filter: drop-shadow(0 0 36px rgba(103,232,249,0.55)); }
+    }
+    .shop-owner-sub {
+      font-size: 1.05rem;
+      color: var(--muted);
+      margin-top: 8px;
+      letter-spacing: 0.12em;
+    }
+    .shop-owner-sub span {
+      color: #c084fc;
+      font-weight: 700;
+    }
+    .shop-owner-deco {
+      font-size: 1.6rem;
+      letter-spacing: 0.2em;
+      margin-top: 10px;
+      opacity: 0.85;
+    }
+    .shop-owner-line {
+      width: 120px; height: 3px;
+      background: linear-gradient(90deg, transparent, #c084fc, #67e8f9, transparent);
+      margin: 14px auto 0;
+      border-radius: 2px;
     }
 
     /* ===== 顶部导航 ===== */
@@ -315,6 +360,14 @@
     <div class="nav-badge">🔥 限时优惠</div>
   </div>
 </header>
+
+<!-- 晓涵的商店 标题 -->
+<div class="shop-owner-banner">
+  <div class="shop-owner-title">晓涵的商店</div>
+  <div class="shop-owner-sub">欢迎来到 <span>晓涵</span> 精心挑选的智能体精品市场 🩷</div>
+  <div class="shop-owner-deco">✦ 🦞 ✦</div>
+  <div class="shop-owner-line"></div>
+</div>
 
 <!-- Hero -->
 <div class="hero">
