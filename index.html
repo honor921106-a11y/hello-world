@@ -109,19 +109,16 @@
     .boy .hair {
       position: absolute;
       top: -6px; left: -4px;
-      width: 88px; height: 32px;
-      background: repeating-linear-gradient(
-        90deg,
-        #3d2b1f 0px, #3d2b1f 6px,
-        #4e3828 6px, #4e3828 12px
-      );
+      width: 88px; height: 38px;
+      background: radial-gradient(ellipse at 40% 30%, #5a3e2b 0%, #3d2b1f 60%, #2a1a0e 100%);
       border-radius: 50% 50% 0 0;
       z-index: 1;
+      box-shadow: inset 0 -4px 8px rgba(0,0,0,0.2), inset 6px -2px 10px rgba(255,255,255,0.08);
     }
     .boy .hair::after {
       content: '';
       position: absolute;
-      top: 20px; left: 4px;
+      top: 26px; left: 4px;
       width: 14px; height: 14px;
       background: #3d2b1f;
       border-radius: 0 0 0 50%;
@@ -176,41 +173,39 @@
     .girl .hair {
       position: absolute;
       top: -10px; left: -8px;
-      width: 88px; height: 38px;
-      background: repeating-linear-gradient(
-        90deg,
-        #8b4513 0px, #8b4513 7px,
-        #a0521a 7px, #a0521a 14px
-      );
+      width: 88px; height: 44px;
+      background: radial-gradient(ellipse at 38% 28%, #b05a20 0%, #8b4513 55%, #5c2d0a 100%);
       border-radius: 50% 50% 20% 20%;
       z-index: 1;
+      box-shadow: inset 0 -4px 10px rgba(0,0,0,0.18), inset 8px -2px 12px rgba(255,200,150,0.12);
     }
     /* 双马尾 */
     .girl .hair::before {
       content: '';
       position: absolute;
-      top: 20px; left: -10px;
+      top: 22px; left: -10px;
       width: 18px; height: 36px;
-      background: #8b4513;
+      background: radial-gradient(ellipse at 40% 30%, #a05018 0%, #8b4513 100%);
       border-radius: 50%;
       transform: rotate(-15deg);
     }
     .girl .hair::after {
       content: '';
       position: absolute;
-      top: 20px; right: -10px;
+      top: 22px; right: -10px;
       width: 18px; height: 36px;
-      background: #8b4513;
+      background: radial-gradient(ellipse at 40% 30%, #a05018 0%, #8b4513 100%);
       border-radius: 50%;
       transform: rotate(15deg);
     }
     /* 发饰 */
     .girl .ribbon {
       position: absolute;
-      top: -22px; left: 50%;
-      transform: translateX(-50%);
+      top: -18px; right: -4px;
       z-index: 3;
-      font-size: 2rem;
+      font-size: 1.8rem;
+      transform: rotate(20deg);
+      display: inline-block;
     }
     .girl .body {
       width: 64px; height: 72px;
