@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OpenClaw Agent Store · 精英智能体市场</title>
+  <style>
+    :root {
+      --bg: #0d0f1a;
+      --surface: #161929;
+      --card: #1e2236;
+      --border: rgba(99,120,255,0.18);
+      --accent: #6378ff;
+      --accent2: #a259ff;
+      --green: #22d3a0;
+      --yellow: #fbbf24;
+      --red: #f87171;
+      --text: #e8eaf6;
+      --muted: #8890b0;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ===== 顶部导航 ===== */
+    header {
+      background: rgba(22,25,41,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top:0; z-index:50;
+      padding: 0 32px;
+      height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 1.18rem; font-weight: 800; letter-spacing: 0.04em;
+    }
+    .logo-icon {
+      width: 34px; height: 34px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+    }
+    .logo span { background: linear-gradient(90deg,var(--accent),var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .nav-right { display:flex; align-items:center; gap:20px; }
+    .nav-badge {
+      background: linear-gradient(135deg,var(--accent),var(--accent2));
+      padding: 6px 18px; border-radius: 20px;
+      font-size: 0.82rem; font-weight: 700; cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .nav-badge:hover { opacity: 0.85; }
+    .nav-tag {
+      font-size: 0.8rem; color: var(--muted);
+    }
+
+    /* ===== Hero ===== */
+    .hero {
+      text-align: center;
+      padding: 64px 24px 48px;
+      background: radial-gradient(ellipse at 50% -10%, rgba(99,120,255,0.18) 0%, transparent 70%);
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(99,120,255,0.12); border: 1px solid rgba(99,120,255,0.3);
+      padding: 5px 16px; border-radius: 20px; font-size: 0.78rem;
+      color: #a0aeff; margin-bottom: 20px;
+    }
+    .hero h1 { font-size: 2.6rem; font-weight: 900; line-height: 1.2; margin-bottom: 14px; }
+    .hero h1 span { background: linear-gradient(90deg,var(--accent),var(--accent2),#ff79c6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .hero p { color: var(--muted); font-size: 1rem; max-width: 520px; margin: 0 auto 32px; line-height: 1.7; }
+    .hero-stats { display:flex; justify-content:center; gap:48px; }
+    .stat-item { text-align:center; }
+    .stat-num { font-size:1.6rem; font-weight:800; background:linear-gradient(90deg,var(--accent),var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .stat-label { font-size:0.75rem; color:var(--muted); margin-top:2px; }
+
+    /* ===== 分类 Tab ===== */
+    .tabs {
+      display: flex; gap: 10px; padding: 0 32px 24px;
+      overflow-x: auto; scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display:none; }
+    .tab {
+      flex-shrink: 0;
+      padding: 8px 20px; border-radius: 20px; font-size: 0.84rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+      background: var(--card); border: 1px solid var(--border); color: var(--muted);
+    }
+    .tab.active, .tab:hover {
+      background: linear-gradient(135deg,var(--accent),var(--accent2));
+      color: #fff; border-color: transparent;
+    }
+
+    /* ===== 商品网格 ===== */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      padding: 0 32px 60px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      transition: transform 0.22s, box-shadow 0.22s, border-color 0.22s;
+      cursor: pointer;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 16px 48px rgba(99,120,255,0.18);
+      border-color: rgba(99,120,255,0.4);
+    }
+
+    .card-banner {
+      height: 90px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.8rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .card-banner::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, transparent 40%, var(--card) 100%);
+    }
+
+    .card-body { padding: 16px 18px 18px; }
+
+    .card-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:8px; }
+    .card-title { font-size:1rem; font-weight:800; line-height:1.3; }
+    .card-ver {
+      font-size: 0.68rem; font-weight: 700;
+      background: rgba(99,120,255,0.15); color: #a0aeff;
+      padding: 2px 8px; border-radius: 8px; white-space:nowrap; margin-left:8px; margin-top:2px;
+    }
+
+    .card-author {
+      display:flex; align-items:center; gap:6px;
+      font-size:0.75rem; color:var(--muted); margin-bottom:10px;
+    }
+    .author-avatar {
+      width:20px; height:20px; border-radius:50%;
+      background: linear-gradient(135deg,var(--accent),var(--accent2));
+      display:flex; align-items:center; justify-content:center; font-size:0.6rem; font-weight:800;
+    }
+
+    .card-desc { font-size:0.82rem; color:var(--muted); line-height:1.6; margin-bottom:12px; }
+
+    .card-tags { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+    .tag {
+      font-size:0.68rem; padding:2px 10px; border-radius:10px; font-weight:600;
+      background:rgba(255,255,255,0.06); color:var(--muted);
+    }
+    .tag.hot { background:rgba(248,113,113,0.15); color:#f87171; }
+    .tag.new { background:rgba(34,211,160,0.15); color:#22d3a0; }
+    .tag.pro { background:rgba(162,89,255,0.15); color:#c084fc; }
+
+    .card-footer { display:flex; align-items:center; justify-content:space-between; }
+    .card-price {
+      font-size:1.18rem; font-weight:900;
+      background:linear-gradient(90deg,var(--accent),var(--accent2));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    }
+    .card-price .price-unit { font-size:0.72rem; font-weight:600; margin-left:2px; }
+    .card-price .price-old { font-size:0.72rem; color:var(--muted); text-decoration:line-through; margin-left:6px; -webkit-text-fill-color:var(--muted); }
+
+    .card-stars { font-size:0.75rem; color:var(--yellow); }
+    .card-sold { font-size:0.72rem; color:var(--muted); }
+
+    .btn-buy {
+      padding: 9px 22px;
+      background: linear-gradient(135deg,var(--accent),var(--accent2));
+      border: none; border-radius: 12px;
+      color: #fff; font-size: 0.85rem; font-weight: 700;
+      cursor: pointer; transition: opacity 0.2s, transform 0.15s;
+      outline: none;
+    }
+    .btn-buy:hover { opacity: 0.88; transform: scale(1.04); }
+    .btn-buy:active { transform: scale(0.97); }
+
+    /* ===== 支付弹窗 ===== */
+    .pay-overlay {
+      display: none; position: fixed; inset:0;
+      background: rgba(0,0,0,0.65); backdrop-filter: blur(8px);
+      align-items: center; justify-content: center; z-index:200;
+    }
+    .pay-overlay.active { display:flex; }
+
+    .pay-modal {
+      background: var(--surface);
+      border: 1px solid rgba(99,120,255,0.3);
+      border-radius: 24px;
+      width: 92%; max-width: 400px;
+      padding: 32px 28px 28px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+      animation: slideUp 0.3s cubic-bezier(0.34,1.56,0.64,1);
+      position: relative;
+    }
+    @keyframes slideUp {
+      from { opacity:0; transform:translateY(40px) scale(0.96); }
+      to   { opacity:1; transform:translateY(0) scale(1); }
+    }
+
+    .pay-close {
+      position:absolute; top:16px; right:18px;
+      background:none; border:none; color:var(--muted);
+      font-size:1.3rem; cursor:pointer; line-height:1;
+    }
+    .pay-close:hover { color:var(--text); }
+
+    .pay-logo { text-align:center; margin-bottom:20px; }
+    .pay-logo-icon {
+      width:48px; height:48px; margin:0 auto 10px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:1.5rem;
+    }
+    .pay-title { font-size:1.1rem; font-weight:800; }
+    .pay-subtitle { font-size:0.78rem; color:var(--muted); margin-top:3px; }
+
+    .pay-item {
+      background: rgba(99,120,255,0.07);
+      border: 1px solid rgba(99,120,255,0.15);
+      border-radius:12px; padding:14px 16px; margin-bottom:16px;
+    }
+    .pay-item-name { font-size:0.9rem; font-weight:700; margin-bottom:4px; }
+    .pay-item-desc { font-size:0.75rem; color:var(--muted); }
+
+    .pay-amount {
+      display:flex; justify-content:space-between; align-items:center;
+      margin-bottom:20px; padding:0 4px;
+    }
+    .pay-amount-label { font-size:0.85rem; color:var(--muted); }
+    .pay-amount-val {
+      font-size:1.5rem; font-weight:900;
+      background:linear-gradient(90deg,var(--accent),var(--accent2));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    }
+
+    .pay-methods { display:flex; gap:10px; margin-bottom:20px; }
+    .pay-method {
+      flex:1; padding:10px 8px; border-radius:10px; text-align:center;
+      border: 2px solid var(--border); cursor:pointer; transition:all 0.18s;
+      font-size:0.78rem; color:var(--muted); font-weight:600;
+    }
+    .pay-method.selected {
+      border-color: var(--accent); color:var(--text);
+      background:rgba(99,120,255,0.1);
+    }
+    .pay-method-icon { font-size:1.3rem; display:block; margin-bottom:4px; }
+
+    .btn-pay {
+      width:100%; padding:14px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      border:none; border-radius:14px; color:#fff;
+      font-size:1rem; font-weight:800; cursor:pointer;
+      transition: opacity 0.2s; letter-spacing:0.05em;
+    }
+    .btn-pay:hover { opacity:0.88; }
+
+    .pay-secure {
+      text-align:center; margin-top:12px;
+      font-size:0.72rem; color:var(--muted);
+    }
+
+    /* 支付成功 */
+    .pay-success {
+      display:none; text-align:center; padding:20px 0;
+    }
+    .pay-success.active { display:block; }
+    .success-icon { font-size:4rem; margin-bottom:14px; animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+    @keyframes popIn { from{transform:scale(0.5);opacity:0;} to{transform:scale(1);opacity:1;} }
+    .success-title { font-size:1.2rem; font-weight:800; color:var(--green); margin-bottom:8px; }
+    .success-desc { font-size:0.82rem; color:var(--muted); line-height:1.6; }
+    .btn-done {
+      margin-top:22px; padding:11px 36px;
+      background:linear-gradient(135deg,var(--green),#0d9488);
+      border:none; border-radius:12px; color:#fff;
+      font-size:0.9rem; font-weight:700; cursor:pointer;
+    }
+
+    /* footer */
+    footer {
+      text-align:center; padding:24px;
+      font-size:0.75rem; color:var(--muted);
+      border-top:1px solid var(--border);
+    }
+
+    @media(max-width:600px){
+      .hero h1 { font-size:1.8rem; }
+      .grid { padding:0 16px 40px; grid-template-columns:1fr; }
+      .tabs { padding:0 16px 20px; }
+      header { padding:0 16px; }
+      .hero-stats { gap:28px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- 导航 -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">🦞</div>
+    <span>OpenClaw Store</span>
+  </div>
+  <div class="nav-right">
+    <span class="nav-tag">精英智能体市场</span>
+    <div class="nav-badge">🔥 限时优惠</div>
+  </div>
+</header>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-badge">🦞 OpenClaw · 精英养殖生态</div>
+  <h1>购买顶尖专家养成的<br/><span>智能体 & 技能包</span></h1>
+  <p>汇集全球精英开发者、AI 研究员、行业专家倾力打造的高质量 Agent 与 Skill，即买即用，快速赋能你的工作流。</p>
+  <div class="hero-stats">
+    <div class="stat-item"><div class="stat-num">1,284</div><div class="stat-label">精品上架</div></div>
+    <div class="stat-item"><div class="stat-num">38K+</div><div class="stat-label">活跃用户</div></div>
+    <div class="stat-item"><div class="stat-num">99.2%</div><div class="stat-label">好评率</div></div>
+  </div>
+</div>
+
+<!-- 分类 -->
+<div class="tabs">
+  <div class="tab active">🏆 全部精品</div>
+  <div class="tab">🦞 顶级 Agent</div>
+  <div class="tab">⚡ Skill 包</div>
+  <div class="tab">📊 金融分析</div>
+  <div class="tab">⚖️ 法律合规</div>
+  <div class="tab">🎨 创意设计</div>
+  <div class="tab">🔬 医疗健康</div>
+  <div class="tab">💻 代码工程</div>
+</div>
+
+<!-- 商品列表 -->
+<div class="grid" id="shopGrid"></div>
+
+<!-- 支付弹窗 -->
+<div class="pay-overlay" id="payOverlay" onclick="handleOverlayClick(event)">
+  <div class="pay-modal" id="payModal">
+    <button class="pay-close" onclick="closePay()">✕</button>
+
+    <!-- 支付表单 -->
+    <div id="payForm">
+      <div class="pay-logo">
+        <div class="pay-logo-icon">💳</div>
+        <div class="pay-title">OpenClaw Pay</div>
+        <div class="pay-subtitle">安全 · 极速 · 可信赖</div>
+      </div>
+
+      <div class="pay-item">
+        <div class="pay-item-name" id="payItemName">—</div>
+        <div class="pay-item-desc" id="payItemDesc">—</div>
+      </div>
+
+      <div class="pay-amount">
+        <span class="pay-amount-label">应付金额</span>
+        <span class="pay-amount-val" id="payAmount">¥0</span>
+      </div>
+
+      <div class="pay-methods">
+        <div class="pay-method selected" onclick="selectMethod(this)">
+          <span class="pay-method-icon">💚</span>微信支付
+        </div>
+        <div class="pay-method" onclick="selectMethod(this)">
+          <span class="pay-method-icon">🔵</span>支付宝
+        </div>
+        <div class="pay-method" onclick="selectMethod(this)">
+          <span class="pay-method-icon">💳</span>银行卡
+        </div>
+      </div>
+
+      <button class="btn-pay" onclick="doFakePay()">立即支付</button>
+      <div class="pay-secure">🔒 SSL 加密保护 · 支持7天无理由退款</div>
+    </div>
+
+    <!-- 支付成功 -->
+    <div class="pay-success" id="paySuccess">
+      <div class="success-icon">🎉</div>
+      <div class="success-title">购买成功！</div>
+      <div class="success-desc" id="successDesc">
+        已为您解锁该智能体，可在控制台 → 我的资产 中查看使用。<br/>感谢您信任 OpenClaw Store！
+      </div>
+      <button class="btn-done" onclick="closePay()">完成</button>
+    </div>
+  </div>
+</div>
+
+<footer>© 2026 OpenClaw Store · 精英智能体生态平台 · 仅供演示</footer>
+
+<script>
+  const products = [
+    {
+      emoji: '🧠', bg: 'linear-gradient(135deg,#1e2a6e,#3730a3)',
+      name: 'QuantMind Pro Agent',
+      ver: 'v3.2.1', type: 'Agent',
+      author: 'Dr. Leon Fischer', initials: 'LF',
+      desc: '前高盛首席量化研究员亲自调教，覆盖多因子选股、期权定价、风险对冲全流程，支持实时接入市场数据源。',
+      tags: ['热销', '金融', '量化', '专业版'],
+      tagsClass: ['hot','','','pro'],
+      price: '¥2,980', oldPrice: '¥4,200', unit: '/永久',
+      stars: '★★★★★', starCount: '4.9', sold: '已售 1,203',
+    },
+    {
+      emoji: '⚖️', bg: 'linear-gradient(135deg,#1a3a2a,#065f46)',
+      name: 'LexGuard 法律助手',
+      ver: 'v2.1.0', type: 'Agent',
+      author: '王律师事务所 · 首席合伙人', initials: '王',
+      desc: '10年法律实务经验沉淀，精通合同审查、诉讼风险评估、知识产权保护，支持中英双语法律文书起草。',
+      tags: ['新品', '法律', '合规'],
+      tagsClass: ['new','',''],
+      price: '¥1,880', oldPrice: '¥2,600', unit: '/年',
+      stars: '★★★★★', starCount: '4.8', sold: '已售 876',
+    },
+    {
+      emoji: '💊', bg: 'linear-gradient(135deg,#2a1a3a,#6b21a8)',
+      name: 'MedSage 临床决策 Agent',
+      ver: 'v4.0.3', type: 'Agent',
+      author: 'Prof. Sarah Lin · 约翰霍普金斯', initials: 'SL',
+      desc: '协和医学院联合约翰霍普金斯大学训练，覆盖影像识别辅助、用药建议、差异诊断，已通过 FDA Class II 评估。',
+      tags: ['热销', '医疗', '专业版'],
+      tagsClass: ['hot','','pro'],
+      price: '¥5,600', oldPrice: '¥8,000', unit: '/年',
+      stars: '★★★★★', starCount: '5.0', sold: '已售 342',
+    },
+    {
+      emoji: '🎨', bg: 'linear-gradient(135deg,#3a1a2a,#9d174d)',
+      name: 'DesignFlow Creative Skill',
+      ver: 'v1.8.2', type: 'Skill',
+      author: 'Alex Wong · 前 Apple 设计总监', initials: 'AW',
+      desc: '集成品牌视觉策略、UI/UX 评审、创意简报生成三大能力，10分钟产出完整设计提案，适配 Figma & Sketch。',
+      tags: ['新品', '设计', '创意'],
+      tagsClass: ['new','',''],
+      price: '¥680', oldPrice: '¥980', unit: '/月',
+      stars: '★★★★☆', starCount: '4.7', sold: '已售 2,014',
+    },
+    {
+      emoji: '🔬', bg: 'linear-gradient(135deg,#1a2a3a,#0c4a6e)',
+      name: 'DataLab 数据科学 Skill',
+      ver: 'v2.5.0', type: 'Skill',
+      author: 'Dr. Mei Zhang · MIT 数据科学', initials: 'MZ',
+      desc: '自动化数据清洗、特征工程、模型选择与可视化报告生成，支持 Pandas、Spark、SQL 多种数据源，一键导出分析报告。',
+      tags: ['热销', '数据', '专业版'],
+      tagsClass: ['hot','','pro'],
+      price: '¥1,280', oldPrice: '¥1,800', unit: '/永久',
+      stars: '★★★★★', starCount: '4.9', sold: '已售 1,567',
+    },
+    {
+      emoji: '🏭', bg: 'linear-gradient(135deg,#2a2a1a,#78350f)',
+      name: 'SupplyChain Ops Agent',
+      ver: 'v1.3.5', type: 'Agent',
+      author: '陈峰 · 前亚马逊全球供应链VP', initials: '陈',
+      desc: '实战于 500 强供应链管理的经验提炼，覆盖库存预测、供应商评估、物流路径优化，可对接 SAP / Oracle ERP。',
+      tags: ['制造', '供应链', '企业版'],
+      tagsClass: ['','','pro'],
+      price: '¥3,980', oldPrice: '¥5,500', unit: '/年',
+      stars: '★★★★☆', starCount: '4.6', sold: '已售 289',
+    },
+    {
+      emoji: '📈', bg: 'linear-gradient(135deg,#1a3a1a,#14532d)',
+      name: 'GrowthHacker 增长营销 Skill',
+      ver: 'v3.1.0', type: 'Skill',
+      author: 'Emma Liu · 字节增长前负责人', initials: 'EL',
+      desc: '用户增长漏斗分析、A/B 实验设计、投放策略优化一站式搞定，助力 DAU 提升 40%+ 的实战方法论落地。',
+      tags: ['新品', '营销', '热销'],
+      tagsClass: ['new','','hot'],
+      price: '¥880', oldPrice: '¥1,200', unit: '/月',
+      stars: '★★★★★', starCount: '4.8', sold: '已售 3,201',
+    },
+    {
+      emoji: '🔐', bg: 'linear-gradient(135deg,#1a1a2a,#312e81)',
+      name: 'CyberShield 安全审计 Agent',
+      ver: 'v2.0.1', type: 'Agent',
+      author: 'Ivan Petrov · 前 NSA 网络安全顾问', initials: 'IP',
+      desc: '覆盖渗透测试、漏洞扫描、代码安全审计、合规检查（等保/GDPR），已服务 200+ 家金融与政务机构。',
+      tags: ['安全', '专业版'],
+      tagsClass: ['','pro'],
+      price: '¥4,500', oldPrice: '¥6,800', unit: '/年',
+      stars: '★★★★★', starCount: '5.0', sold: '已售 198',
+    },
+    {
+      emoji: '🌐', bg: 'linear-gradient(135deg,#1a2a3a,#1e3a5f)',
+      name: 'TranslatePro 多语言 Skill',
+      ver: 'v5.0.0', type: 'Skill',
+      author: '林晓燕 · 联合国前首席译员', initials: '林',
+      desc: '精通 32 种语言的专业级翻译，支持法律、医学、金融、外交等专业领域，文风把控媲美人工翻译水准。',
+      tags: ['热销', '语言', '新品'],
+      tagsClass: ['hot','','new'],
+      price: '¥480', oldPrice: '¥680', unit: '/月',
+      stars: '★★★★★', starCount: '4.9', sold: '已售 5,632',
+    },
+  ];
+
+  const grid = document.getElementById('shopGrid');
+  products.forEach((p, i) => {
+    const tagsHtml = p.tags.map((t,j) => `<span class="tag ${p.tagsClass[j]}">${t}</span>`).join('');
+    grid.innerHTML += `
+      <div class="card" onclick="openPay(${i})">
+        <div class="card-banner" style="background:${p.bg}">
+          <span style="position:relative;z-index:1">${p.emoji}</span>
+        </div>
+        <div class="card-body">
+          <div class="card-header">
+            <div class="card-title">${p.name}</div>
+            <span class="card-ver">${p.ver}</span>
+          </div>
+          <div class="card-author">
+            <div class="author-avatar">${p.initials}</div>
+            <span>${p.author}</span>
+            <span style="margin-left:4px;background:rgba(34,211,160,0.12);color:#22d3a0;padding:1px 7px;border-radius:6px;font-size:0.65rem;font-weight:700;">${p.type}</span>
+          </div>
+          <div class="card-desc">${p.desc}</div>
+          <div class="card-tags">${tagsHtml}</div>
+          <div class="card-footer">
+            <div>
+              <div class="card-price">
+                ${p.price}<span class="price-unit">${p.unit}</span>
+                <span class="price-old">${p.oldPrice}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
+                <span class="card-stars">${p.stars}</span>
+                <span style="font-size:0.72rem;color:#fbbf24;font-weight:700;">${p.starCount}</span>
+                <span class="card-sold">· ${p.sold}</span>
+              </div>
+            </div>
+            <button class="btn-buy" onclick="event.stopPropagation();openPay(${i})">立即购买</button>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+
+  // 支付弹窗
+  let currentMethod = null;
+  function openPay(i) {
+    const p = products[i];
+    document.getElementById('payItemName').textContent = p.emoji + ' ' + p.name + ' ' + p.ver;
+    document.getElementById('payItemDesc').textContent = p.author + ' · ' + p.type + ' · 授权周期：' + p.unit.replace('/','');
+    document.getElementById('payAmount').textContent = p.price;
+    document.getElementById('payForm').style.display = 'block';
+    document.getElementById('paySuccess').classList.remove('active');
+    document.getElementById('successDesc').textContent =
+      `已为您解锁「${p.name}」，可在控制台 → 我的资产 中查看使用。\n感谢您信任 OpenClaw Store！`;
+    // 重置支付方式
+    document.querySelectorAll('.pay-method').forEach((el,idx) => {
+      el.classList.toggle('selected', idx === 0);
+    });
+    document.getElementById('payOverlay').classList.add('active');
+  }
+
+  function closePay() {
+    document.getElementById('payOverlay').classList.remove('active');
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('payOverlay')) closePay();
+  }
+
+  function selectMethod(el) {
+    document.querySelectorAll('.pay-method').forEach(m => m.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function doFakePay() {
+    const btn = document.querySelector('.btn-pay');
+    btn.textContent = '处理中...';
+    btn.disabled = true;
+    setTimeout(() => {
+      btn.textContent = '立即支付';
+      btn.disabled = false;
+      document.getElementById('payForm').style.display = 'none';
+      document.getElementById('paySuccess').classList.add('active');
+    }, 1800);
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closePay(); });
+</script>
+</body>
+</html>
