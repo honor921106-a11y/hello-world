@@ -446,7 +446,30 @@
       letter-spacing: 0.05em;
     }
 
-    /* 飘出的小爱心 */
+    /* 溢出状态罐子发光 */
+    .jar-body.overflow {
+      border-color: rgba(255, 80, 120, 0.9);
+      box-shadow: 0 8px 24px rgba(220,80,120,0.4), inset 4px 6px 14px rgba(255,255,255,0.6), 0 0 18px rgba(255,100,140,0.6);
+      animation: jarGlow 1.2s ease-in-out infinite alternate;
+    }
+    @keyframes jarGlow {
+      from { box-shadow: 0 8px 24px rgba(220,80,120,0.4), 0 0 12px rgba(255,100,140,0.5); }
+      to   { box-shadow: 0 8px 32px rgba(220,80,120,0.7), 0 0 28px rgba(255,100,140,0.9); }
+    }
+    /* 溢出爱心从罐口冒出 */
+    .overflow-heart {
+      position: absolute;
+      font-size: 1rem;
+      pointer-events: none;
+      z-index: 10;
+      top: -8px;
+      animation: overflowAnim 1.4s ease-out forwards;
+    }
+    @keyframes overflowAnim {
+      0%   { opacity: 1; transform: translate(var(--ox), 0) scale(1); }
+      60%  { opacity: 0.9; }
+      100% { opacity: 0; transform: translate(var(--ox), -55px) scale(0.5); }
+    }
     .pop-heart {
       position: fixed;
       font-size: 1.3rem;
@@ -577,19 +600,54 @@
   const MAX = 100;
   const jarFill = document.getElementById('jarFill');
   const jarCount = document.getElementById('jarCount');
+  const jarBody = document.querySelector('.jar-body');
+  const jarLabel = document.querySelector('.jar-label');
   const popEmojis = ['❤️','🩷','💕','💗','💖','💓'];
 
   function updateJar() {
     const pct = Math.min(heartCount / MAX * 100, 100);
     jarFill.style.height = pct + '%';
-    jarCount.textContent = heartCount >= MAX ? '满满的爱💖' : heartCount;
+    if (heartCount >= MAX) {
+      jarCount.textContent = '共 ' + heartCount + ' 💖';
+      jarCount.style.fontSize = '0.68rem';
+      jarBody.classList.add('overflow');
+      jarLabel.textContent = '爱心已满，继续溢出中 💗';
+    } else {
+      jarCount.textContent = heartCount;
+      jarCount.style.fontSize = '0.78rem';
+      jarBody.classList.remove('overflow');
+      jarLabel.textContent = '点击存入爱心 💗';
+    }
   }
   updateJar();
+
+  function spawnOverflowHearts() {
+    // 从罐口冒出 2~3 颗
+    const num = 2 + Math.floor(Math.random() * 2);
+    for (let i = 0; i < num; i++) {
+      setTimeout(() => {
+        const el = document.createElement('span');
+        el.className = 'overflow-heart';
+        el.textContent = popEmojis[Math.floor(Math.random() * popEmojis.length)];
+        const ox = (Math.random() - 0.5) * 44;
+        el.style.setProperty('--ox', ox + 'px');
+        el.style.left = (36 + ox * 0.3) + 'px';
+        jarBody.appendChild(el);
+        el.addEventListener('animationend', () => el.remove());
+      }, i * 120);
+    }
+  }
 
   function addHeart(e) {
     heartCount++;
     localStorage.setItem('heartCount', heartCount);
     updateJar();
+
+    // 满了后额外触发溢出冒泡
+    if (heartCount >= MAX) {
+      spawnOverflowHearts();
+    }
+
     // 飘出 3~5 颗小爱心
     const num = 3 + Math.floor(Math.random() * 3);
     const rect = document.getElementById('jarWrap').getBoundingClientRect();
